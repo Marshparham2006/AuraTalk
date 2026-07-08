@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Chat | AuraTalk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 25px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-left .back-btn { color: #888; text-decoration: none; font-size: 22px; transition: color 0.3s ease; line-height: 1; }
+        .header-left .back-btn:hover { color: #fff; }
+        .header-left .chat-info .name { font-size: 18px; font-weight: 600; }
+        .header-left .chat-info .status { font-size: 12px; color: #4ade80; }
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.05);
+            padding: 6px 14px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .header .user-info .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6C25FF, #0088FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .header .user-info .username-link { color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; }
+        .header .user-info .logout { color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s ease; }
+        .header .user-info .logout:hover { color: #ff6b6b; }
+
+        .chat-container {
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            min-height: 300px;
+            max-height: calc(100vh - 180px);
+        }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #6C25FF; border-radius: 10px; }
+
+        .message {
+            padding: 10px 14px;
+            border-radius: 12px;
+            max-width: 75%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message.self {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #6C25FF, #0088FF);
+            border-bottom-right-radius: 4px;
+        }
+        .message.other {
+            align-self: flex-start;
+            background: rgba(255,255,255,0.07);
+            border-bottom-left-radius: 4px;
+        }
+        .message .sender { font-size: 12px; color: #888; margin-bottom: 3px; font-weight: 600; }
+        .message.self .sender { color: rgba(255,255,255,0.6); }
+        .message.other .sender { color: #6C25FF; }
+        .message .text { font-size: 15px; line-height: 1.5; }
+        .message .time { font-size: 10px; color: #666; margin-top: 4px; text-align: right; }
+        .message.self .time { color: rgba(255,255,255,0.4); }
+
+        .empty-state {
+            text-align: center;
+            color: #666;
+            padding: 50px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .empty-state .icon { font-size: 56px; display: block; margin-bottom: 15px; }
+        .empty-state h3 { font-size: 18px; color: #aaa; margin-bottom: 6px; }
+        .empty-state p { font-size: 14px; }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+            padding: 12px 0;
+            flex-shrink: 0;
+            align-items: center;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 12px 18px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .chat-input input:focus { border-color: #6C25FF; background: rgba(255,255,255,0.06); }
+        .chat-input input::placeholder { color: #555; }
+        .chat-input input:disabled { opacity: 0.4; cursor: not-allowed; }
+        .chat-input button {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #6C25FF, #0088FF);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+        }
+        .chat-input button:hover:not(:disabled) {
+            transform: scale(1.03);
+            box-shadow: 0 0 30px rgba(108, 37, 255, 0.3);
+        }
+        .chat-input button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .connection-status {
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+            padding: 4px 0;
+            flex-shrink: 0;
+        }
+        .connection-status .online { color: #4ade80; }
+        .connection-status .offline { color: #ef4444; }
+
+        @media (max-width: 600px) {
+            .header { padding: 10px 15px; flex-wrap: wrap; gap: 8px; }
+            .header .user-info { padding: 4px 12px; }
+            .header-left .chat-info .name { font-size: 15px; }
+            .chat-container { padding: 10px 12px; }
+            .message { max-width: 85%; }
+            .chat-input input { font-size: 14px; padding: 10px 14px; }
+            .chat-input button { padding: 10px 18px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <a href="/friend-list/" class="back-btn">←</a>
+            <div class="chat-info">
+                <div class="name">💬 {{ other_user.display_name }}</div>
+                <div class="status">● Online</div>
+            </div>
+        </div>
+        <div class="user-info">
+            <div class="avatar">{{ username|slice:":1"|upper }}</div>
+            <a href="/profile/" class="username-link">{{ username }}</a>
+            <a href="/choose-username/" class="logout">🔄</a>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-messages" id="messages">
+            <div class="empty-state" id="emptyState">
+                <span class="icon">💬</span>
+                <h3>No messages yet</h3>
+                <p>Start your private conversation with {{ other_user.display_name }}</p>
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Type a message..." disabled>
+            <button id="sendBtn" disabled>Send</button>
+        </div>
+        <div class="connection-status" id="connectionStatus">
+            <span class="offline">● Disconnected</span>
+            <span style="margin:0 6px;">•</span>
+            <span>Connecting to private chat...</span>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 Private chat page loaded!');
+        
+        const roomId = {{ room_id }};
+        const username = '{{ username }}';
+        const otherUser = '{{ other_user.display_name }}';
+        
+        console.log('Room ID:', roomId);
+        console.log('Username:', username);
+        console.log('Other user:', otherUser);
+        
+        const messagesContainer = document.getElementById('messages');
+        const emptyState = document.getElementById('emptyState');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const connectionStatus = document.getElementById('connectionStatus');
+
+        let ws = null;
+        let isConnected = false;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 10;
+
+        function updateStatus(status, message) {
+            let statusClass = 'offline';
+            let label = 'Disconnected';
+            
+            if (status === 'connected') {
+                statusClass = 'online';
+                label = 'Connected';
+            } else if (status === 'error') {
+                statusClass = 'offline';
+                label = 'Error';
+            }
+            
+            connectionStatus.innerHTML = `
+                <span class="${statusClass}">● ${label}</span>
+                <span style="margin:0 6px;">•</span>
+                <span>${message}</span>
+            `;
+        }
+
+        function loadHistory() {
+            fetch(`/get-private-messages/${roomId}/`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.messages && data.messages.length > 0) {
+                        if (emptyState) emptyState.style.display = 'none';
+                        data.messages.forEach(msg => {
+                            addMessage(msg.content, msg.sender, msg.is_self, msg.created_at);
+                        });
+                    }
+                })
+                .catch(err => console.error('Error loading history:', err));
+        }
+
+        function connectWebSocket() {
+            const wsUrl = `ws://127.0.0.1:8000/ws/private-chat/${roomId}/?username=${username}`;
+            console.log('🔄 Connecting to WebSocket:', wsUrl);
+            updateStatus('connecting', 'Connecting...');
+            
+            try {
+                ws = new WebSocket(wsUrl);
+            } catch (e) {
+                console.error('❌ Failed to create WebSocket:', e);
+                updateStatus('error', 'Failed to create connection');
+                return;
+            }
+
+            ws.onopen = function() {
+                isConnected = true;
+                reconnectAttempts = 0;
+                console.log('✅ WebSocket CONNECTED!');
+                updateStatus('connected', 'Live Chat Active');
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+                messageInput.placeholder = 'Type a message...';
+                messageInput.focus();
+                
+                // بارگذاری تاریخچه
+                loadHistory();
+            };
+
+            ws.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    console.log('📩 Message received:', data);
+                    
+                    if (data.type === 'message') {
+                        if (emptyState) emptyState.style.display = 'none';
+                        const isSelf = data.sender === username;
+                        addMessage(data.content, data.sender, isSelf, data.time);
+                    }
+                } catch (e) {
+                    console.error('❌ Error parsing message:', e);
+                }
+            };
+
+            ws.onerror = function(error) {
+                console.error('❌ WebSocket error:', error);
+                updateStatus('error', 'Connection error');
+            };
+
+            ws.onclose = function(event) {
+                isConnected = false;
+                console.log('🔴 WebSocket disconnected, code:', event.code);
+                updateStatus('disconnected', 'Reconnecting...');
+                messageInput.disabled = true;
+                sendBtn.disabled = true;
+                
+                if (reconnectAttempts < maxReconnectAttempts) {
+                    reconnectAttempts++;
+                    console.log(`🔄 Reconnect attempt ${reconnectAttempts}/${maxReconnectAttempts}`);
+                    setTimeout(connectWebSocket, 2000);
+                } else {
+                    updateStatus('error', 'Failed to connect after multiple attempts');
+                }
+            };
+        }
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || !isConnected) {
+                console.warn('Cannot send: message empty or not connected');
+                return;
+            }
+
+            try {
+                ws.send(JSON.stringify({
+                    'message': message,
+                    'sender': username,
+                    'room_id': roomId
+                }));
+                console.log('📤 Message sent:', message);
+                messageInput.value = '';
+                messageInput.focus();
+            } catch (e) {
+                console.error('❌ Error sending message:', e);
+            }
+        }
+
+        function addMessage(text, sender, isSelf = false, time = null) {
+            if (emptyState) emptyState.style.display = 'none';
+            
+            const div = document.createElement('div');
+            const messageTime = time || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            div.className = `message ${isSelf ? 'self' : 'other'}`;
+            div.innerHTML = `
+                <div class="sender">${isSelf ? 'You' : sender}</div>
+                <div class="text">${text}</div>
+                <div class="time">${messageTime}</div>
+            `;
+            
+            messagesContainer.appendChild(div);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // ===== Event Listeners =====
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            sendMessage();
+        });
+
+        console.log('🚀 Starting WebSocket connection...');
+        connectWebSocket();
+    </script>
+</body>
+</html>

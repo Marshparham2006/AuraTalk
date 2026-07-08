@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Username | AuraTalk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+            padding: 50px 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 500px;
+            width: 100%;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .logo {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6C25FF, #0088FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #aaa;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .form-group input {
+            padding: 16px 20px;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 18px;
+            font-weight: 400;
+            outline: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-group input:focus {
+            border-color: #6C25FF;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(108, 37, 255, 0.2);
+        }
+        .form-group input::placeholder {
+            color: #555;
+        }
+        .btn-join {
+            padding: 16px 45px;
+            background: linear-gradient(135deg, #6C25FF, #0088FF);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-join:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 30px rgba(108, 37, 255, 0.4);
+        }
+        .sub-note {
+            font-size: 13px;
+            color: #555;
+            margin-top: 15px;
+        }
+        .sub-note span {
+            color: #6C25FF;
+        }
+        .error-message {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        @media (max-width: 500px) {
+            .container { padding: 30px 20px; }
+            h1 { font-size: 26px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">✨</div>
+        <h1>Choose Your Username</h1>
+        <p>This is how you'll appear in chat rooms.<br>You can change it anytime.</p>
+        
+        <form method="POST" onsubmit="return validateForm(event)">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="username" id="username" placeholder="Enter a cool username..." maxlength="20" autofocus>
+                <button type="submit" class="btn-join">🚀 Join AuraTalk</button>
+                <div id="error-message" class="error-message">Please enter a valid username.</div>
+            </div>
+        </form>
+        
+        <p class="sub-note">
+            ⚡ No sign-up needed • <span>100% Anonymous</span>
+        </p>
+    </div>
+
+    <script>
+        function validateForm(event) {
+            const username = document.getElementById('username').value.trim();
+            const errorDiv = document.getElementById('error-message');
+            if (username.length === 0) {
+                event.preventDefault();
+                errorDiv.classList.add('show');
+                return false;
+            }
+            errorDiv.classList.remove('show');
+            return true;
+        }
+    </script>
+</body>
+</html>
+
+

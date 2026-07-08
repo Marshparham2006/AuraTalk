@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends | AuraTalk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            padding: 30px;
+            color: #fff;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, #6C25FF, #0088FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header .back-btn {
+            color: #888;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        .header .back-btn:hover { color: #aaa; }
+
+        .section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            font-size: 18px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+        .section .empty {
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .friend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .friend-item:last-child { border-bottom: none; }
+        .friend-item .info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .friend-item .info .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6C25FF, #0088FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .friend-item .info .name { font-weight: 600; }
+        .friend-item .info .username { font-size: 12px; color: #666; }
+
+        .btn {
+            padding: 6px 16px;
+            border-radius: 50px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-accept { background: #4ade80; color: #1a1a2e; }
+        .btn-accept:hover { transform: scale(1.05); }
+        .btn-reject { background: #ff6b6b; color: #fff; }
+        .btn-reject:hover { transform: scale(1.05); }
+        .btn-chat { background: linear-gradient(135deg, #6C25FF, #0088FF); color: #fff; }
+        .btn-chat:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(108,37,255,0.3); }
+        .btn-add { background: #6C25FF; color: #fff; }
+        .btn-add:hover { transform: scale(1.05); }
+
+        .add-friend-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .add-friend-form input {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .add-friend-form input:focus { border-color: #6C25FF; }
+        .add-friend-form input::placeholder { color: #666; }
+        .add-friend-form button {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #6C25FF, #0088FF);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        .add-friend-form button:hover { transform: scale(1.03); }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+            z-index: 999;
+        }
+        .toast.success { background: #4ade80; color: #1a1a2e; }
+        .toast.error { background: #ff6b6b; color: #fff; }
+        .toast.show { display: block; animation: slideUp 0.3s ease; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 15px; }
+            .add-friend-form { flex-direction: column; }
+            .friend-item { flex-wrap: wrap; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👥 Friends</h1>
+            <a href="/chat/" class="back-btn">← Back to Chat</a>
+        </div>
+
+        <!-- افزودن دوست -->
+        <div class="section">
+            <h2>➕ Add Friend</h2>
+            <div class="add-friend-form">
+                <input type="text" id="friendUsername" placeholder="Enter username..." maxlength="30">
+                <button onclick="sendFriendRequest()">Send Request</button>
+            </div>
+        </div>
+
+        <!-- درخواست‌های دریافت شده -->
+        <div class="section">
+            <h2>📩 Received Requests</h2>
+            {% if received_requests %}
+                {% for req in received_requests %}
+                <div class="friend-item" id="req-{{ req.id }}">
+                    <div class="info">
+                        <div class="avatar">{{ req.from_user.display_name|slice:":1"|upper }}</div>
+                        <div>
+                            <div class="name">{{ req.from_user.display_name }}</div>
+                            <div class="username">{{ req.from_user.user_id }}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-accept" onclick="acceptRequest({{ req.id }})">Accept</button>
+                        <button class="btn btn-reject" onclick="rejectRequest({{ req.id }})">Reject</button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty">No pending requests</div>
+                {% endfor %}
+            {% else %}
+                <div class="empty">No pending requests</div>
+            {% endif %}
+        </div>
+
+        <!-- درخواست‌های ارسال شده -->
+        <div class="section">
+            <h2>📤 Sent Requests</h2>
+            {% if sent_requests %}
+                {% for req in sent_requests %}
+                <div class="friend-item">
+                    <div class="info">
+                        <div class="avatar">{{ req.to_user.display_name|slice:":1"|upper }}</div>
+                        <div>
+                            <div class="name">{{ req.to_user.display_name }}</div>
+                            <div class="username" style="color:#facc15;">⏳ Pending...</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty">No sent requests</div>
+            {% endif %}
+        </div>
+
+        <!-- لیست دوستان -->
+        <div class="section">
+            <h2>👫 Your Friends</h2>
+            {% if friends %}
+                {% for friend in friends %}
+                <div class="friend-item">
+                    <div class="info">
+                        <div class="avatar">{{ friend.display_name|slice:":1"|upper }}</div>
+                        <div>
+                            <div class="name">{{ friend.display_name }}</div>
+                            <div class="username">{{ friend.user_id }}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-chat" onclick="startChat('{{ friend.display_name }}')">💬 Chat</button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty">No friends yet. Send some requests!</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') return value;
+            }
+            return '';
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        function sendFriendRequest() {
+            const input = document.getElementById('friendUsername');
+            const username = input.value.trim();
+            if (!username) {
+                showToast('Please enter a username', 'error');
+                return;
+            }
+
+            fetch('/send-friend-request/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: `target_username=${encodeURIComponent(username)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('✅ Friend request sent!');
+                    input.value = '';
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('❌ ' + data.error, 'error');
+                }
+            })
+            .catch(() => showToast('❌ Network error', 'error'));
+        }
+
+        function acceptRequest(requestId) {
+            fetch(`/accept-friend-request/${requestId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('✅ Friend accepted!');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('❌ ' + data.error, 'error');
+                }
+            })
+            .catch(() => showToast('❌ Network error', 'error'));
+        }
+
+        function rejectRequest(requestId) {
+            fetch(`/reject-friend-request/${requestId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Request rejected');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('❌ ' + data.error, 'error');
+                }
+            })
+            .catch(() => showToast('❌ Network error', 'error'));
+        }
+
+        function startChat(friendUsername) {
+            fetch('/get-or-create-private-room/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: `friend_username=${encodeURIComponent(friendUsername)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = `/private-chat/${data.room_id}/`;
+                } else {
+                    showToast('❌ ' + data.error, 'error');
+                }
+            })
+            .catch(() => showToast('❌ Network error', 'error'));
+        }
+    </script>
+</body>
+</html>
