@@ -505,7 +505,11 @@
         }
 
         function connectWebSocket() {
-            const wsUrl = `ws://127.0.0.1:8000/ws/chat/${roomId}/?username=${username}`;
+            // ===== آدرس WebSocket برای Render =====
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/chat/${roomId}/?username=${username}`;
+            // =====================================
+            
             console.log('🔄 Connecting to WebSocket:', wsUrl);
             updateStatus('connecting', 'Connecting...');
             
