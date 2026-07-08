@@ -7,12 +7,18 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-c19l9b%cyx)&s6r!shx@#x*j5qu#q)ndl5&*t6lw=dx)-)wg2t'
-DEBUG = False  # <-- تغییر به False برای Production
+DEBUG = False
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    '.onrender.com',  # برای همه ساب‌دامین‌های Render
-    'auratalkchat.onrender.com',  # دامنه اختصاصی
+    '.onrender.com',
+    'auratalkchat.onrender.com',
+]
+
+# ===== CSRF Trusted Origins (برای جلوگیری از خطای 403) =====
+CSRF_TRUSTED_ORIGINS = [
+    'https://auratalkchat.onrender.com',
+    'http://auratalkchat.onrender.com',
 ]
 
 INSTALLED_APPS = [
@@ -93,3 +99,4 @@ CHANNEL_LAYERS = {
 # ===== تنظیمات فایل =====
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
+
