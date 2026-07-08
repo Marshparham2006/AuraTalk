@@ -333,6 +333,23 @@ def admin_panel(request):
     return render(request, 'admin_panel.html', context)
 
 # ==========================================
+# Google Search Console Verification
+# ==========================================
+
+def google_verification(request):
+    return HttpResponse("""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta name="google-site-verification" content="SWq2tKZQ33oqwYC0-3TMdxG_Jt2pXWe3L9GR8eAgDlw" />
+    </head>
+    <body>
+        Google Search Console verification
+    </body>
+    </html>
+    """)
+
+# ==========================================
 # سیستم دوست‌یابی
 # ==========================================
 
@@ -585,41 +602,3 @@ def get_private_messages(request, room_id):
         })
     
     return JsonResponse({'messages': data})
-def get_or_create_private_room(request):
-    """پیدا کردن یا ایجاد چت خصوصی با یک دوست"""
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Invalid method'}, status=400)
-    
-    if not request.session.get('username'):
-        return JsonResponse({'error': 'Not logged in'}, status=401)
-    
-    username = request.session.get('username')
-    friend_username = request.POST.get('friend_username')
-    
-    if not friend_username:
-        return JsonResponse({'error': 'Friend username is required'}, status=400)
-    
-    try:
-        user = AnonymousUser.objects.get(display_name=username)
-        friend = AnonymousUser.objects.get(display_name=friend_username)
-    except AnonymousUser.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
-    
-    # بررسی دوست بودن
-    is_friend = FriendRequest.objects.filter(
-        (Q(from_user=user, to_user=friend) | Q(from_user=friend, to_user=user)),
-        status='accepted'
-    ).exists()
-    
-    if not is_friend:
-        return JsonResponse({'error': 'You are not friends with this user'}, status=403)
-    
-    # پیدا کردن یا ایجاد چت خصوصی
-    room = PrivateChatRoom.objects.filter(
-        (Q(user1=user, user2=friend) | Q(user1=friend, user2=user))
-    ).first()
-    
-    if not room:
-        room = PrivateChatRoom.objects.create(user1=user, user2=friend)
-    
-    return JsonResponse({'success': True, 'room_id': room.id})
