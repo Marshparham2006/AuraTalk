@@ -8,7 +8,7 @@ def home(request):
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="google-site-verification" content="SWq2tKZQ33oqwYC0-3TMdxG_Jt2pXWe3L9GR8eAgDlw" />
     <title>AuraTalk - Anonymous Chat Rooms | Talk Freely</title>
     <meta name="description" content="Join AuraTalk, the best anonymous chat platform. No sign-up, no tracking, just real conversations with people around the world. Free and private.">
     <meta name="keywords" content="anonymous chat, free chat rooms, talk to strangers, private chat, no sign-up chat, online chat">
