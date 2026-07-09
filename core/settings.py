@@ -13,6 +13,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '.onrender.com',
     'auratalkchat.onrender.com',
+    'https://auratalk.com',
 ]
 
 # ===== CSRF Trusted Origins (برای جلوگیری از خطای 403) =====
