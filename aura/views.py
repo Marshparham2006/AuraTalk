@@ -301,19 +301,29 @@ def sitemap(request):
     xml = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://127.0.0.1:8000/</loc>
+        <loc>https://auratalkchat.onrender.com/</loc>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://127.0.0.1:8000/chat/</loc>
+        <loc>https://auratalkchat.onrender.com/chat/</loc>
         <changefreq>hourly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
-        <loc>https://127.0.0.1:8000/choose-username/</loc>
+        <loc>https://auratalkchat.onrender.com/choose-username/</loc>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://auratalkchat.onrender.com/friend-list/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://auratalkchat.onrender.com/profile/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
     </url>
 </urlset>"""
     return HttpResponse(xml, content_type='application/xml')
