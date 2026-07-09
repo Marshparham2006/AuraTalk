@@ -11,4 +11,5 @@ urlpatterns = [
     path('update-profile/', views.update_profile, name='update_profile'),
     path('admin-panel/', views.admin_panel, name='admin_panel'),
     path('google123456789.html', views.google_verification, name='google_verification'),
+    path('sitemap.xml', views.sitemap, name='sitemap'),
 ]
