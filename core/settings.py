@@ -3,6 +3,7 @@ Django settings for core project.
 """
 
 from pathlib import Path
+import os  # ← این رو اضافه کن
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -82,7 +83,15 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+# ============================================
+# تنظیمات فایل‌های استاتیک (STATIC)
+# ============================================
+STATIC_URL = '/static/'  # ← حتماً با / شروع بشه
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # ← جایی که collectstatic فایل‌ها رو جمع می‌کنه
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # ← جایی که فایل‌های استاتیک خودت رو می‌ذاری
+]
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
