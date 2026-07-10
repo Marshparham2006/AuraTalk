@@ -296,7 +296,21 @@ def chat_room(request, room_id):
     }
     return render(request, 'chat_room.html', context)
 
-# ===== Sitemap =====
+# ==========================================
+# robots.txt
+# ==========================================
+
+def robots_txt(request):
+    content = """User-agent: *
+Allow: /
+Sitemap: https://auratalkchat.onrender.com/sitemap.xml
+"""
+    return HttpResponse(content, content_type='text/plain')
+
+# ==========================================
+# Sitemap
+# ==========================================
+
 def sitemap(request):
     xml = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -328,7 +342,10 @@ def sitemap(request):
 </urlset>"""
     return HttpResponse(xml, content_type='application/xml')
 
-# ===== Admin Panel =====
+# ==========================================
+# Admin Panel
+# ==========================================
+
 def admin_panel(request):
     if request.META.get('REMOTE_ADDR') != '127.0.0.1':
         return redirect('/')
