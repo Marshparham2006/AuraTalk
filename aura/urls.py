@@ -12,5 +12,5 @@ urlpatterns = [
     path('admin-panel/', views.admin_panel, name='admin_panel'),
     path('google123456789.html', views.google_verification, name='google_verification'),
     path('sitemap.xml', views.sitemap, name='sitemap'),
-    path('robots.txt', views.robots_txt, name='robots_txt'),
+   path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain'), name='robots_txt'),
 ]
