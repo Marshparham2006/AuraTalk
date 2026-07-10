@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://auratalkchat.onrender.com/sitemap.xml
